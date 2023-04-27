@@ -2,6 +2,7 @@ import { DevError } from '../Helpers/errors/dev.error';
 import { cleanEnv, str, port, host, bool, num } from 'envalid';
 import { injectable } from 'inversify';
 import { isNullOrWhitespace } from '../Helpers/utils/string.helpers';
+import { APPLICATION_PORT, MONGO_HOST, MONGO_USER, MONGO_PASSWORD, MONGO_DATABASE, MONGO_PORT, URL_CLIENT } from './env';
 
 @injectable()
 export class AppConfig {
@@ -78,32 +79,30 @@ export class AppConfig {
     }
 
     public initialize(processEnv: NodeJS.ProcessEnv) {
-        const env = cleanEnv(processEnv, {
-            MONGO_USER: str({ example: 'lkurzyniec', devDefault: '' }),
-            MONGO_PASSWORD: str({ example: 'someSTRONGpwd123', devDefault: '' }),
-            MONGO_HOST: host({ devDefault: 'localhost', example: 'mongodb0.example.com' }),
-            MONGO_PORT: port({ default: 27017 }),
-            MONGO_DATABASE: str({ default: 'intranet' }),
-            APPLICATION_PORT: port({ devDefault: 5000, desc: 'Port number on which the Application will run' }),
-            DEBUG: bool({ default: false, devDefault: true }),
-            TOKEN_EXPIRATION_IN_MIN: num({ default: 15, devDefault: 60 }),
-            SMTP_PORT: port({devDefault: 587, desc: '587'}),
-            SMTP_USER: str({devDefault: 'sergio.inventiba', example: 'sergio.inventiba'}),
-            SMTP_PASSWORD: str({devDefault: 'sergioorjuela'}),
-            URL_CLIENT: str({devDefault: 'localhost:3000/'})
-        });
+        
+        // const env = cleanEnv(processEnv, {
+        //     MONGO_USER: str({ example: 'lkurzyniec', devDefault: '' }),
+        //     MONGO_PASSWORD: str({ example: 'someSTRONGpwd123', devDefault: '' }),
+        //     MONGO_HOST: host({ devDefault: 'localhost', example: 'mongodb0.example.com' }),
+        //     MONGO_PORT: port({ default: 27017 }),
+        //     MONGO_DATABASE: str({ default: 'intranet' }),
+        //     APPLICATION_PORT: port({ devDefault: 5000, desc: 'Port number on which the Application will run' }),
+        //     DEBUG: bool({ default: false, devDefault: true }),
+        //     TOKEN_EXPIRATION_IN_MIN: num({ default: 15, devDefault: 60 }),
+        //     SMTP_PORT: port({devDefault: 587, desc: '587'}),
+        //     SMTP_USER: str({devDefault: 'sergio.inventiba', example: 'sergio.inventiba'}),
+        //     SMTP_PASSWORD: str({devDefault: 'sergioorjuela'}),
+        //     URL_CLIENT: str({devDefault: 'localhost:3000/'})
+        // });
 
-        this._mongoUser = env.MONGO_USER;
-        this._mongoPassword = env.MONGO_PASSWORD;
-        this._mongoHost = env.MONGO_HOST;
-        this._mongoPort = env.MONGO_PORT;
-        this._mongoDatabase = env.MONGO_DATABASE;
-        this._applicationPort = env.APPLICATION_PORT;
-        this._debug = env.DEBUG;
-        this._tokenExpirationInMin = env.TOKEN_EXPIRATION_IN_MIN;
-        this._smtpUsername = env.SMTP_USER;
-        this._smtpPassword = env.SMTP_PASSWORD;
-        this._smtpPort = env.SMTP_PORT;
-        this._urlClient = env.URL_CLIENT;
+        this._mongoUser = MONGO_USER;
+        this._mongoPassword = MONGO_PASSWORD;
+        this._mongoHost = MONGO_HOST;
+        this._mongoPort = parseInt(MONGO_PORT);
+        this._mongoDatabase = MONGO_DATABASE;
+        this._applicationPort = 5050;
+        this._debug = true;
+        this._tokenExpirationInMin = 540;
+        this._urlClient = URL_CLIENT;
     }
 }

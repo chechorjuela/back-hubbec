@@ -68,7 +68,6 @@ export class AuthService implements IAuthServiceInterface {
         responseDto.message = "Contraseña o usuario invalido";
       }
     } else {
-
       responseDto.status = 400;
       responseDto.message = "Usuario no existe";
     }

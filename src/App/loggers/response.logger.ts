@@ -9,7 +9,7 @@ export class ResponseLogger extends BaseLogger {
 
   public log(request: Request, response: Response, body?: any): void {
     if (!request.originalUrl.includes('swagger')) {
-      this.debug(`${response.statusCode} ${STATUS_CODES[response.statusCode]} ${body}`);
+      this.debug(`${response.statusCode} ${response.statusCode} ${body}`);
     }
   }
 }

@@ -6,11 +6,12 @@ import {BaseController} from '../base.controller';
 import {Request, Response} from "express";
 import {StatusHelper} from '../../../Helpers/utils/status.helper';
 import {IBodyRequest} from '../../interfaces/IBody.request';
-import {DtoValidator} from '../../../Helpers/decorators/dto-validator.decorator';
 import {SignInRequestDto} from "../../../Domain/dtos/auth/signIn.request.dto";
+import { DtoValidator } from '../../../Helpers/decorators/dto-validator.decorator';
 
 @injectable()
 export class AuthController extends BaseController {
+
   @inject(AuthService) private readonly auth: AuthService;
   @inject(AppConfig) private readonly appConfig: AppConfig;
 
@@ -25,7 +26,7 @@ export class AuthController extends BaseController {
       .post(`${this.path}/logout`, this.logout.bind(this));
   }
 
-  @DtoValidator(SignUpRequestDto)
+  @DtoValidator(SignInRequestDto)
   private async register(request: IBodyRequest<SignUpRequestDto>, response: Response) {
     const dto = request.body;
 
@@ -61,7 +62,7 @@ export class AuthController extends BaseController {
     const dto = request.body;
 
     const loginResult = await this.auth.singIn(dto);
-    if (loginResult) {
+    if (loginResult.status === 200) {
       response.setHeader('Set-Cookie', `Authorization=${loginResult.data.token.token}; HttpOnly; Max-Age=${loginResult.data.token.expiresIn}; Path=${this.appConfig.apiPath}`);
       response.send(loginResult.data);
       return;

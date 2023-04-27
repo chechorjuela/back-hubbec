@@ -23,8 +23,7 @@ export class ErrorExtractor {
     if (error instanceof HttpError) {
       status = error.status;
     }
-
-    let message = STATUS_CODES[status];
+    let message = `${status}`;
 
     let errors = null;
     let place = null;

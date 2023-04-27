@@ -4,7 +4,6 @@ import {BaseController} from '../base.controller';
 import {Response} from "express";
 import {StatusHelper} from '../../../Helpers/utils/status.helper';
 import {IBodyRequest} from '../../interfaces/IBody.request';
-import {DtoValidator} from '../../../Helpers/decorators/dto-validator.decorator';
 import {IdValidator} from '../../../Helpers/decorators/id-validator.decorator';
 import {UserService} from "../../../Infrastructure/services/user/user.service";
 import {UserRequestDto} from "../../../Domain/dtos/user/user.request.dto";
@@ -73,7 +72,6 @@ export class UserController extends BaseController {
    *        401:
    *          description: Wrong login data
    */
-  @DtoValidator(UserRequestDto)
   private async create(request: IBodyRequest<UserRequestDto>, response: Response) {
     const dto = request.body;
     const user = await this.userService.create(dto);
@@ -84,7 +82,6 @@ export class UserController extends BaseController {
   }
 
   @IdValidator()
-  @DtoValidator(UserRequestDto)
   private async update(request: IBodyRequest<UserRequestDto>, response: Response) {
     const userUpdate = await this.userService.update(request.params.id, request.body);
     response.send(userUpdate);

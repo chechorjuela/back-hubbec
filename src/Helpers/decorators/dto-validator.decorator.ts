@@ -1,11 +1,10 @@
 import { Response } from "express";
 import { validate, ValidationError as Error } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { ClassType } from 'class-transformer/types';
 import { ValidationError, ValidationErrorPlace } from '../errors/validation.error';
 import { IBodyRequest } from '../../Applications/interfaces/IBody.request';
 
-export function DtoValidator<T>(type: ClassType<T>, skipMissingProperties = false) {
+export function DtoValidator<T>(type: any, skipMissingProperties = false) {
   const getError = function (err: Error): string {
     if (err.children && err.children.length) {
       return `${err.property}: ` + err.children.map((item) => { return getError(item); }).join('; ');
@@ -21,7 +20,7 @@ export function DtoValidator<T>(type: ClassType<T>, skipMissingProperties = fals
         throw new ValidationError(ValidationErrorPlace.Body, 'Body of the request is required');
       }
 
-      const dto = plainToClass(type, request.body) as T;
+      const dto = plainToClass(type, request.body) as any;
       request.body = dto;
 
       const errors = await validate(dto, { validationError: { target: false }, skipMissingProperties });

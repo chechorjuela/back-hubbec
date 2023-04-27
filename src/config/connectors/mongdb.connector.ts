@@ -12,9 +12,9 @@ export class MongoDbConnector {
   public connect(): void {
     const connectionOptions = {
       useNewUrlParser: true,
-      useUnifiedTopology: true,
+      useUnifiedTopology: true/*,
       useFindAndModify: false,
-      useCreateIndex: true,
+      useCreateIndex: true,*/
     };
 
     let connector;

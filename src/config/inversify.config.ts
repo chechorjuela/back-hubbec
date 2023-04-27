@@ -24,11 +24,13 @@ import {AppConfig} from './app.config';
 import {BaseController} from '../Applications/controllers/base.controller';
 import {UserService} from '../Infrastructure/services/user/user.service';
 import {SwaggerConfig} from './swagger.config';
+import {ResetPasswordRepository} from "../Domain/repositories/resetPassword.repository";
+import { ResetPasswordModel } from '../Domain/models/resetPassword.model';
+
 
 /*import {FilesService} from "../Infrastructure/services/file/file.service";
 import {FilePathRepository} from "../Domain/repositories/filePath.repository";
 import SendEmailService from "../Infrastructure/services/mail/sendEmail.service";
-import {ResetPasswordRepository} from "../Domain/repositories/resetPassword.repository";
 import {TypeUserRepository} from "../Domain/repositories/typeUser.repository";
 import {TypeUserModel} from "../Domain/models/typeUser.model";
 import {StatusRepository} from "../Domain/repositories/status.repository";
@@ -88,7 +90,7 @@ export class Container {
   private getRepositoriesModule(): ContainerModule {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<UsersRepository>(UsersRepository).toConstantValue(new UsersRepository(UserModel));
-      //bind<ResetPasswordRepository>(ResetPasswordRepository).toConstantValue(new ResetPasswordRepository(ResetPasswordModel));
+      bind<ResetPasswordRepository>(ResetPasswordRepository).toConstantValue(new ResetPasswordRepository(ResetPasswordModel));
     });
   }
 
