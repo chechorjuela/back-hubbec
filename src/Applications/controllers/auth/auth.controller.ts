@@ -21,16 +21,16 @@ export class AuthController extends BaseController {
 
   public initializeRoutes(): void {
     this.router
-      .post(`${this.path}/singup`, this.register.bind(this))
+      .post(`${this.path}/signup`, this.register.bind(this))
       .post(`${this.path}/login`, this.login.bind(this))
       .post(`${this.path}/logout`, this.logout.bind(this));
   }
 
-  @DtoValidator(SignInRequestDto)
+  @DtoValidator(SignUpRequestDto)
   private async register(request: IBodyRequest<SignUpRequestDto>, response: Response) {
     const dto = request.body;
 
-    const result = await this.auth.singUp(dto);
+    const result = await this.auth.signUp(dto);
     response.send(result);
     return;
   }
@@ -61,7 +61,7 @@ export class AuthController extends BaseController {
   private async login(request: IBodyRequest<SignInRequestDto>, response: Response) {
     const dto = request.body;
 
-    const loginResult = await this.auth.singIn(dto);
+    const loginResult = await this.auth.signIn(dto);
     if (loginResult.status === 200) {
       response.setHeader('Set-Cookie', `Authorization=${loginResult.data.token.token}; HttpOnly; Max-Age=${loginResult.data.token.expiresIn}; Path=${this.appConfig.apiPath}`);
       response.send(loginResult.data);

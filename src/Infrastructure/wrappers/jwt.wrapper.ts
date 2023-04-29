@@ -8,7 +8,6 @@ export class JwtWrapper {
     secretOrPrivateKey: Secret,
     options?: SignOptions,
   ): string {
-    // @ts-ignore
     return jwt.sign(payload, secretOrPrivateKey, options);
   }
 
@@ -17,7 +16,6 @@ export class JwtWrapper {
     secretOrPublicKey: Secret,
     options?: VerifyOptions
   ): object | string {
-    // @ts-ignore
     return jwt.verify(token, secretOrPublicKey, options);
   }
 }

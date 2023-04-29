@@ -1,6 +1,4 @@
 import {IsDateString, IsEmail, IsEnum, IsNumber, IsString, MinLength, ValidateNested} from 'class-validator';
-import {Type} from "class-transformer/decorators";
-import {FilePathRequestDto} from "../file/File.request.dto";
 export class UserRequestDto{
 
   @IsString()
@@ -22,7 +20,4 @@ export class UserRequestDto{
   @IsDateString()
   public birthdate: Date;
 
-  @ValidateNested()
-  @Type(()=> FilePathRequestDto)
-  public file: FilePathRequestDto;
 }

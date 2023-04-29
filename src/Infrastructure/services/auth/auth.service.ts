@@ -31,7 +31,7 @@ export class AuthService implements IAuthServiceInterface {
   @inject(BcryptWrapper) private readonly bcrypt: BcryptWrapper;
   @inject(AppConfig) private readonly appConfig: AppConfig;
 
-  public async singUp(dto: SignUpRequestDto): Promise<ResponseBaseDto<UserResponseDto>> {
+  public async signUp(dto: SignUpRequestDto): Promise<ResponseBaseDto<UserResponseDto>> {
     let responseDto: ResponseBaseDto<UserResponseDto> = new ResponseBaseDto<UserResponseDto>();
 
     const isEmailTaken = await this.repoUser.exists({email: dto.email});
@@ -53,13 +53,13 @@ export class AuthService implements IAuthServiceInterface {
     return responseDto;
   }
 
-  public async singIn(dto: SignInRequestDto): Promise<ResponseBaseDto<UserResponseDto>> {
+  public async signIn(dto: SignInRequestDto): Promise<ResponseBaseDto<UserResponseDto>> {
     let responseDto: ResponseBaseDto<UserResponseDto> = new ResponseBaseDto<UserResponseDto>();
     const user = await this.repoUser.findOne({email: dto.email});
     if (user !== null) {
       const isPasswordMatch = await this.bcrypt.compare(dto.password, user.password);
       if (isPasswordMatch) {
-        const token = this.tokenService.create(user);
+        const token = await this.tokenService.create(user);
         const userDto = this.modelToDto(user, token);
         responseDto.data = userDto;
         responseDto.status = 200;
@@ -144,6 +144,7 @@ export class AuthService implements IAuthServiceInterface {
       firstname: model.firstname,
       email: model.email,
       lastname: model.lastname,
+      token: token
     });
   }
 
@@ -152,6 +153,7 @@ export class AuthService implements IAuthServiceInterface {
       firstname: dto.firstname,
       lastname: dto.lastname,
       password: dto.password,
+      email: dto.email
     });
   };
 }

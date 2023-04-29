@@ -1,14 +1,10 @@
 import {User} from '../../../Domain/models/user.model';
 import {inject, injectable} from 'inversify';
 import {BaseService} from '../base.service';
-import {UserResponseDto} from "../../../Domain/dtos/user/user.response.dto";
-import {UserRequestDto} from "../../../Domain/dtos/user/user.request.dto";
-import {ResponseBaseDto} from "../../../Domain/dtos/response.base.dto";
-import {UsersRepository} from "../../../Domain/repositories/user.repository";
+import {UserResponseDto, UserRequestDto, ResponseBaseDto, PaginatorResponse, UpdatePasswordRequestDto} from "../../../Domain/dtos/index.response";
+import {UsersRepository} from "../../../Domain/repositories/index.repositories";
 import {BcryptWrapper} from "../../wrappers/bcrypt.wrapper";
-import {PaginatorResponse} from "../../../Domain/dtos/paginator.response.dto";
 import IUserServiceImplInterface from "../../interfaces/IUserServiceImpl.interface";
-import {UpdatePasswordRequestDto} from "../../../Domain/dtos/auth/updatePassword.request.dto";
 
 @injectable()
 export class UserService extends BaseService<UserResponseDto, UserRequestDto, User> implements IUserServiceImplInterface{
@@ -107,9 +103,7 @@ export class UserService extends BaseService<UserResponseDto, UserRequestDto, Us
     if (exist) {
       let model = this.dtoToModel(dto);
       delete model.password;
-      console.info(model);
-      // @ts-ignore
-      model.update_at = Date.now();
+      model.updateAt = new Date(Date.now());
       model = await this.repo.update(id, model);
       if (model) {
         [responseDto.data] = await Promise.all([this.modelToDto(model)]);
@@ -163,7 +157,6 @@ export class UserService extends BaseService<UserResponseDto, UserRequestDto, Us
       email: dto.email,
       birthdate: dto.birthdate,
       password: passwordToken,
-
     });
   };
 }

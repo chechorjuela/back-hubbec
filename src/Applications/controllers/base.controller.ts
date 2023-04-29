@@ -33,7 +33,7 @@ export abstract class BaseController {
 
   protected getBoolFromQueryParams(request: Request, queryParam: string): boolean {
     const paramValue = request.query[queryParam] || "false";
-    const value = /*new Validator().isBooleanString(paramValue) &&*/ (paramValue.toString().toLowerCase() === "true" || paramValue === "1");
+    const value = (paramValue.toString().toLowerCase() === "true" || paramValue === "1");
     return value;
   }
 

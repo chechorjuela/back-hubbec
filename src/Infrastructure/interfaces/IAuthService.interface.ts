@@ -4,9 +4,7 @@ import {UserResponseDto} from "../../Domain/dtos/user/user.response.dto";
 import {ResponseBaseDto} from "../../Domain/dtos/response.base.dto";
 
 export default interface IAuthServiceInterface {
-  singUp(signup: SignUpRequestDto): Promise<ResponseBaseDto<UserResponseDto>>
+  signUp(signup: SignUpRequestDto): Promise<ResponseBaseDto<UserResponseDto>>
 
-  singIn(login: SignInRequestDto): Promise<ResponseBaseDto<UserResponseDto>>
-
-
+  signIn(login: SignInRequestDto): Promise<ResponseBaseDto<UserResponseDto>>
 }

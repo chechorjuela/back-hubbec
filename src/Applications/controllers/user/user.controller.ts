@@ -34,7 +34,6 @@ export class UserController extends BaseController {
     response.send(data);*/
     const withDeleted = this.getBoolFromQueryParams(request, 'deleted');
 
-    console.info();
     const usersList = await this.userService.getAll(withDeleted, request.query);
     response.send(usersList);
     return;

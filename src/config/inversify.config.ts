@@ -1,40 +1,54 @@
-// import { ProgressRepository } from '../Domain/repositories/progress.repository';
-import {JwtWrapper} from '../Infrastructure/wrappers/jwt.wrapper';
-import {BcryptWrapper} from '../Infrastructure/wrappers/bcrypt.wrapper';
-import {AuthLogger} from '../App/loggers/auth.logger';
-import {AuthMiddleware} from '../Applications/middlewares/auth.middleware';
-import {SecretsProvider} from '../Infrastructure/services/token/secrets.provider';
-import {TokenService} from '../Infrastructure/services/token/token.service';
-import {AuthService} from '../Infrastructure/services/auth/auth.service';
-import {UserModel} from '../Domain/models/user.model';
-import {UsersRepository} from '../Domain/repositories/user.repository';
-import {AuthController} from '../Applications/controllers/auth/auth.controller';
-import {ErrorExtractor} from '../Helpers/error-extractor.helper';
-import {ResponseLoggerMiddleware} from '../Applications/middlewares/response-logger.middleware';
-import {ResponseLogger} from '../App/loggers/response.logger';
-import {ErrorMiddleware} from '../Applications/middlewares/error.middleware';
-import {RequestLoggerMiddleware} from '../Applications/middlewares/request.logger.middleware';
-import {RequestLogger} from '../App/loggers/request.logger';
-import {Container as InversifyContainer, interfaces, ContainerModule} from 'inversify';
-import {AppLogger} from '../App/loggers/app.logger';
-import {UserController} from '../Applications/controllers/user/user.controller';
-import {MongoDbConnector} from './connectors/mongdb.connector';
-import {App} from '../App/app';
-import {AppConfig} from './app.config';
-import {BaseController} from '../Applications/controllers/base.controller';
-import {UserService} from '../Infrastructure/services/user/user.service';
-import {SwaggerConfig} from './swagger.config';
-import {ResetPasswordRepository} from "../Domain/repositories/resetPassword.repository";
-import { ResetPasswordModel } from '../Domain/models/resetPassword.model';
+import { JwtWrapper, BcryptWrapper } from "../Infrastructure/wrappers/index.wrapper";
 
+import { ErrorExtractor } from "../Helpers/error-extractor.helper";
 
-/*import {FilesService} from "../Infrastructure/services/file/file.service";
-import {FilePathRepository} from "../Domain/repositories/filePath.repository";
-import SendEmailService from "../Infrastructure/services/mail/sendEmail.service";
-import {TypeUserRepository} from "../Domain/repositories/typeUser.repository";
-import {TypeUserModel} from "../Domain/models/typeUser.model";
-import {StatusRepository} from "../Domain/repositories/status.repository";
-import {StatusModel} from "../Domain/models/status.model";*/
+import {
+  AuthMiddleware,
+  ResponseLoggerMiddleware,
+  ErrorMiddleware,
+  RequestLoggerMiddleware,
+} from "../Applications/middlewares/index.middleware";
+
+import {
+  AuthLogger,
+  AppLogger,
+  ResponseLogger,
+  RequestLogger,
+} from "../App/loggers/index.logger";
+
+import {
+  Container as InversifyContainer,
+  interfaces,
+  ContainerModule,
+} from "inversify";
+
+import { MongoDbConnector } from "./connectors/mongdb.connector";
+import { App } from "../App/app";
+import { AppConfig } from "./app.config";
+import {
+  UserService,
+  TokenService,
+  AuthService,
+  SecretsProvider,
+  HobbieService,
+} from "../Infrastructure/services/index.services";
+import { SwaggerConfig } from "./swagger.config";
+import {
+  HobbieController,
+  AuthController,
+  UserController,
+  BaseController,
+} from "../Applications/controllers/index.controller";
+
+import { UserModel } from "../Domain/models/user.model";
+import { HobbieModel } from "../Domain/models/hobbie.model";
+import { ResetPasswordModel } from "../Domain/models/resetPassword.model";
+
+import {
+  HobbieRepository,
+  ResetPasswordRepository,
+  UsersRepository,
+} from "../Domain/repositories/index.repositories";
 
 export class Container {
   private _container: InversifyContainer = new InversifyContainer();
@@ -51,7 +65,6 @@ export class Container {
     return this.container.get(App);
   }
 
-  // https://github.com/inversify/InversifyJS/blob/master/wiki/recipes.md#injecting-dependencies-into-a-function
   private bindDependencies(func: Function, dependencies: any[]): Function {
     let injections = dependencies.map((dependency) => {
       return this.container.get(dependency);
@@ -76,6 +89,7 @@ export class Container {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<BaseController>(BaseController).to(UserController);
       bind<BaseController>(BaseController).to(AuthController);
+      bind<BaseController>(BaseController).to(HobbieController);
     });
   }
 
@@ -84,6 +98,7 @@ export class Container {
       bind<AuthService>(AuthService).toSelf();
       bind<TokenService>(TokenService).toSelf();
       bind<UserService>(UserService).toSelf();
+      bind<HobbieService>(HobbieService).toSelf();
     });
   }
 
@@ -91,6 +106,7 @@ export class Container {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<UsersRepository>(UsersRepository).toConstantValue(new UsersRepository(UserModel));
       bind<ResetPasswordRepository>(ResetPasswordRepository).toConstantValue(new ResetPasswordRepository(ResetPasswordModel));
+      bind<HobbieRepository>(HobbieRepository).toConstantValue(new HobbieRepository(HobbieModel));
     });
   }
 

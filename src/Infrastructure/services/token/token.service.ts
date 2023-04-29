@@ -25,7 +25,6 @@ export class TokenService {
       expiresIn: this.appConfig.tokenExpirationInMin * 60,
     };
     const token = this.jwt.sign(tokenData, this.secretsProvider.privateKey, options);
-
     return {
       expiresIn: options.expiresIn as number,
       token,

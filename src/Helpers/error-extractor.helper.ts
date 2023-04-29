@@ -2,7 +2,6 @@ import { HttpError } from './errors/http.error';
 import { AppConfig } from '../config/app.config';
 import { ValidationError } from './errors/validation.error';
 import { injectable, inject } from 'inversify';
-import { STATUS_CODES } from 'statuses';
 
 export interface ErrorResult {
   status: number;
