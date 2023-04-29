@@ -14,7 +14,7 @@ export class UserController extends BaseController {
   @inject(UserService) private readonly userService: UserService;
 
   constructor() {
-    super('/user');
+    super('/user',true);
   }
 
   public initializeRoutes(): void {

@@ -8,7 +8,7 @@ const userSchema = new Schema({
   phoneNumber: {type: Schema.Types.Number, required: true},
   email: {type: Schema.Types.String, required: true, unique: true},
   password: {type: Schema.Types.String, required: true},
-  typeId: {ref: 'TypeIdentificator', type: Schema.Types.ObjectId, required: true},
+  typeId: { type: Schema.Types.String, required: true},
   numberId: {type: Schema.Types.String, required: true},
   photoProfile: {ref: 'FilePath', type: Schema.Types.ObjectId},
   birthdate: {type: Schema.Types.Date},

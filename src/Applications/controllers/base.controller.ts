@@ -24,9 +24,8 @@ export abstract class BaseController {
     this.router = PromiseRouter();
     this.path = path;
 
-    if (addAuth) {
-      this.router
-        .all(this.path, this.authenticate())
+    if(addAuth) {
+      this.router.all(this.path, this.authenticate())
         .all(`${this.path}/*`, this.authenticate());
     }
   }

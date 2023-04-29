@@ -44,9 +44,7 @@ export class HobbieService extends BaseService<HobbieResponseDto, HobbieRequestD
     return responseDto;
   }
 
-  public async getAll(
-    deleted: boolean,
-    queryfilter
+  public async getAll(deleted: boolean,queryfilter
   ): Promise<ResponseBaseDto<PaginatorResponse<HobbieResponseDto[]>>> {
     let responseDto: ResponseBaseDto<PaginatorResponse<HobbieResponseDto[]>> =
       new ResponseBaseDto<PaginatorResponse<HobbieResponseDto[]>>();

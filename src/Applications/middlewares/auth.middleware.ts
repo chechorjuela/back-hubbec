@@ -9,11 +9,16 @@ export class AuthMiddleware {
   @inject(TokenService) private readonly tokenService: TokenService;
 
   public handle(request: IAuthRequest, response: Response, next: NextFunction): void {
-    if (!request.cookies || !request.cookies.Authorization) {
+
+    const bearerAuth = request.headers.authorization.replace("bearer ","");
+    
+    if (bearerAuth.length === 0) {
       throw StatusHelper.error401Unauthorized;
     }
+    
+    const dataToken = bearerAuth ? bearerAuth : request.cookies.Authorization;
+    const tokenData = this.tokenService.verify(dataToken);
 
-    const tokenData = this.tokenService.verify(request.cookies.Authorization);
     if (!tokenData) {
       throw StatusHelper.error401Unauthorized;
     }

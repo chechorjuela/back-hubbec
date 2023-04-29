@@ -11,8 +11,6 @@ export class UserResponseDto {
     token: string;
     expiresIn: number;
   };
-  public selectAcordeon?: boolean = false;
-  public progress?: [];
 
   constructor(init?: Partial<UserResponseDto>) {
     Object.assign(this, init);

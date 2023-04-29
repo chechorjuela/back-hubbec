@@ -153,7 +153,10 @@ export class AuthService implements IAuthServiceInterface {
       firstname: dto.firstname,
       lastname: dto.lastname,
       password: dto.password,
-      email: dto.email
+      email: dto.email,
+      typeId: dto.typeId,
+      numberId: dto.numberId,
+      phoneNumber: dto.phoneNumber,
     });
   };
 }

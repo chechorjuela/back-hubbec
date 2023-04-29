@@ -22,4 +22,17 @@ export class SignUpRequestDto {
   @MinLength(4)
   @MaxLength(20)
   passwordConfirm: string;
+
+  @IsString()
+  @MinLength(2)
+  public typeId: string;
+
+  @IsString()
+  @MinLength(2)
+  public numberId: string;
+
+  @IsString()
+  @MinLength(5)
+  public phoneNumber: string;
+
 }
