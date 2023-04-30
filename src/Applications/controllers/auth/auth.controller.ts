@@ -63,7 +63,7 @@ export class AuthController extends BaseController {
 
     const loginResult = await this.auth.signIn(dto);
     if (loginResult.status === 200) {
-      //response.setHeader('Set-Cookie', `Authorization=${loginResult.data.token.token}; HttpOnly; Max-Age=${loginResult.data.token.expiresIn}; Path=${this.appConfig.apiPath}`);
+      response.setHeader('Set-Cookie', `Authorization=${loginResult.data.token.token}; HttpOnly; Max-Age=${loginResult.data.token.expiresIn}; Path=${this.appConfig.apiPath}`);
       response.send(loginResult.data);
       return;
     }

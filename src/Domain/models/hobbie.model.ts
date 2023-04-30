@@ -4,7 +4,7 @@ import {BaseModel} from './base.model';
 const hobbieSchema = new Schema({
   nameHobbie: {type: Schema.Types.String, required: true},
   userId: {ref: 'User', type: Schema.Types.ObjectId, required: true},
-  creaetAt: {type: Schema.Types.Date, default: new Date(Date.now())},
+  createAt: {type: Schema.Types.Date, default: new Date(Date.now())},
   updateAt: {type: Schema.Types.Date},
   delete: {type: Schema.Types.Boolean, default: false}
 });

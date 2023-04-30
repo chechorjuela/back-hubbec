@@ -8,11 +8,13 @@ import {IdValidator} from '../../../Helpers/decorators/id-validator.decorator';
 import {UserService} from "../../../Infrastructure/services/user/user.service";
 import {UserRequestDto} from "../../../Domain/dtos/user/user.request.dto";
 import {UpdatePasswordRequestDto} from "../../../Domain/dtos/auth/updatePassword.request.dto";
+import {UploadImageRequestDto} from '../../../Domain/dtos/user/uploadImage.request.dto';
+import {FilesService} from '../../../Infrastructure/services/user/filePath.service';
 
 @injectable()
 export class UserController extends BaseController {
   @inject(UserService) private readonly userService: UserService;
-
+  
   constructor() {
     super('/user',true);
   }
@@ -25,6 +27,7 @@ export class UserController extends BaseController {
       .get(`${this.path}/:id`, this.getById.bind(this))
       .delete(`${this.path}/:id`, this.delete.bind(this))
       .get(`${this.path}/profile/:id`, this.getProfile.bind(this))
+      .post(`${this.path}/uploadImage`,this.uploadImage.bind(this))
       .post(`${this.path}/updatepassword`, this.updatePassword.bind(this))
   }
 
@@ -39,7 +42,6 @@ export class UserController extends BaseController {
     return;
   }
 
-  @IdValidator()
   private async getById(request: IAuthRequest, response: Response) {
     const userUpdate = await this.userService.findById(request.params.id);
     if (userUpdate) {
@@ -89,7 +91,6 @@ export class UserController extends BaseController {
 
   private async getProfile(request: IBodyRequest<UserRequestDto>, response: Response) {
     const userProfile = await this.userService.findById(request.params.id);
-    // @ts-ignore
     response.sendfile(userProfile.data.profile_image);
     return;
   }
@@ -108,6 +109,12 @@ export class UserController extends BaseController {
   private async updatePassword(request: IBodyRequest<UpdatePasswordRequestDto>, response: Response) {
     const dto = request.body;
     const passwordUpdate = await this.userService.updatePassword(dto);
+    response.send(passwordUpdate)
+  }
+
+  private async uploadImage(request: IBodyRequest<UploadImageRequestDto>, response: Response) {
+    const dto = request.body;
+    const passwordUpdate = await this.userService.uploadImage(dto);
     response.send(passwordUpdate)
   }
 }

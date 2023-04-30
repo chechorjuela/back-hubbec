@@ -3,7 +3,7 @@ export class HobbieResponseDto {
   public nameHobbie: string;
   public userId: string;
   public create_at: Date;
-  public update_at: Date;
+  public update_at?: Date;
 
   constructor(init?: Partial<HobbieResponseDto>) {
     Object.assign(this, init);

@@ -7,5 +7,6 @@ export class HobbieRequestDto{
 
   @IsString()
   @MinLength(3)
-  userId: string;
+  user_id: string;
+
 }

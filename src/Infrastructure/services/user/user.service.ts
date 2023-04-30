@@ -1,16 +1,29 @@
+import {FileRepository} from './../../../Domain/repositories/filePath.repository';
+import {FilesService} from './filePath.service';
+import {UploadImageRequestDto} from './../../../Domain/dtos/user/uploadImage.request.dto';
 import {User} from '../../../Domain/models/user.model';
 import {inject, injectable} from 'inversify';
 import {BaseService} from '../base.service';
-import {UserResponseDto, UserRequestDto, ResponseBaseDto, PaginatorResponse, UpdatePasswordRequestDto} from "../../../Domain/dtos/index.response";
+import {
+  UserResponseDto,
+  UserRequestDto,
+  ResponseBaseDto,
+  PaginatorResponse,
+  UpdatePasswordRequestDto
+} from "../../../Domain/dtos/index.response";
 import {UsersRepository} from "../../../Domain/repositories/index.repositories";
 import {BcryptWrapper} from "../../wrappers/bcrypt.wrapper";
 import IUserServiceImplInterface from "../../interfaces/IUserServiceImpl.interface";
+import {FilePathResponseDto} from 'Domain/dtos/user/filepath.response.dto';
 
 @injectable()
-export class UserService extends BaseService<UserResponseDto, UserRequestDto, User> implements IUserServiceImplInterface{
+export class UserService extends BaseService<UserResponseDto, UserRequestDto, User> implements IUserServiceImplInterface {
+
 
   @inject(UsersRepository) protected readonly repo: UsersRepository;
   @inject(BcryptWrapper) private readonly bcrypt: BcryptWrapper;
+  @inject(FilesService) private readonly filesService: FilesService;
+  @inject(FileRepository) private readonly repoFileRepo: FileRepository;
 
   private readonly salt = 10;
 
@@ -62,10 +75,11 @@ export class UserService extends BaseService<UserResponseDto, UserRequestDto, Us
 
   public async findById(id: string): Promise<ResponseBaseDto<UserResponseDto>> {
     let responseDto: ResponseBaseDto<UserResponseDto> = new ResponseBaseDto<UserResponseDto>();
+
     const find_exist = await this.repo.exists({_id: id});
     if (find_exist) {
-      let user_find;
-      [user_find, responseDto.data] = await Promise.all([this.repo.findById(id), this.modelToDto(user_find)]);
+      const user_find = await this.repo.findById(id);
+      responseDto.data = await this.modelToDto(user_find);
     } else {
       responseDto.message = "No se encuentro resultados";
     }
@@ -118,35 +132,47 @@ export class UserService extends BaseService<UserResponseDto, UserRequestDto, Us
     let responseDto: ResponseBaseDto<UserResponseDto> = new ResponseBaseDto<UserResponseDto>();
     const user = await this.repo.findById(dto.userId);
     const isPasswordMatch = await this.bcrypt.compare(dto.currentPassword, user.password);
-    if(isPasswordMatch){
-      if(dto.newPassword===dto.rptPassword){
+    if (isPasswordMatch) {
+      if (dto.newPassword === dto.rptPassword) {
         let dtoUser: UserResponseDto = new UserResponseDto();
         let model;
         [user.password, model, dtoUser] = await Promise.all([this.bcrypt.hash(dto.newPassword, this.salt), this.repo.update(dto.userId, user), this.modelToDto(model)]);
         responseDto.status = 200;
         responseDto.data = dtoUser;
-      }else{
+      } else {
         responseDto.status = 402;
       }
-    }else{
+    } else {
       responseDto.status = 401;
     }
     return responseDto;
   }
 
+  public async uploadImage(fileImage: UploadImageRequestDto): Promise<ResponseBaseDto<FilePathResponseDto[]>> {
+    let responseDto: ResponseBaseDto<FilePathResponseDto[]> = new ResponseBaseDto<FilePathResponseDto[]>();
+    responseDto.data = await this.filesService.createFile(fileImage.picture, 'user', fileImage.user_id, 'images');
+
+    return responseDto;
+
+  }
+
   protected modelToDto(model: User): UserResponseDto {
-    const dto = new UserResponseDto({
-      id: model._id,
+    return new UserResponseDto({
+      address: model.address,
+      country: model.country,
+      city: model.city,
       firstname: model.firstname,
       email: model.email,
       lastname: model.lastname,
+      phonenumber: model.phoneNumber,
+      profile_image: model.photoProfile.dir_path,
+      typeId: model.typeId,
+      numberId: model.numberId,
       birthdate: model.birthdate,
       create_at: model.createAt,
       update_at: model.updateAt,
-
     });
 
-    return dto;
   }
 
   protected dtoToModel(dto: UserRequestDto, passwordToken?: string): User {
@@ -157,6 +183,10 @@ export class UserService extends BaseService<UserResponseDto, UserRequestDto, Us
       email: dto.email,
       birthdate: dto.birthdate,
       password: passwordToken,
+      expeditionDate: dto.expeditionDate,
+      numberId: dto.numberId,
+      country: dto.country,
+      city: dto.city,
     });
   };
 }

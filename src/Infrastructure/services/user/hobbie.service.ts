@@ -7,6 +7,7 @@ import { HobbieRepository } from "../../../Domain/repositories/index.repositorie
 import { HobbieRequestDto } from "../../../Domain/dtos/user/hobbie.request.dto";
 import { HobbieResponseDto } from "../../../Domain/dtos/user/hobbie.response.dto";
 import IHobbieServiceImplInterface from "../../../Infrastructure/interfaces/IHobbieService.interface";
+import { request } from "express";
 
 @injectable()
 export class HobbieService extends BaseService<HobbieResponseDto, HobbieRequestDto, Hobbie> implements IHobbieServiceImplInterface
@@ -16,10 +17,17 @@ export class HobbieService extends BaseService<HobbieResponseDto, HobbieRequestD
   public async create(hobbieRequest: HobbieRequestDto): Promise<ResponseBaseDto<HobbieResponseDto>> {
     
     let responseDto: ResponseBaseDto<HobbieResponseDto> = new ResponseBaseDto<HobbieResponseDto>();
-
     const isExist = await this.repo.exists({
       nameHobbie: hobbieRequest.nameHobbie,
+      userId: hobbieRequest.user_id
     });
+    if(!isExist){
+      const dataHobbie = this.dtoToModel(hobbieRequest);
+      const hobbieData = await this.repo.create(dataHobbie);
+      responseDto.data = await this.modelToDto(hobbieData);
+      responseDto.message = "Hobbie created successfully";
+      return responseDto;
+    }
 
     return responseDto;
   }
@@ -27,7 +35,13 @@ export class HobbieService extends BaseService<HobbieResponseDto, HobbieRequestD
   public async delete(id: string): Promise<ResponseBaseDto<HobbieResponseDto>> {
     let responseDto: ResponseBaseDto<HobbieResponseDto> = new ResponseBaseDto<HobbieResponseDto>();
     const exist = await this.repo.exists({ _id: id });
-
+    const dataHobbie = await this.repo.findById(id);
+    const deleteHobbie = exist ? await this.repo.delete(id) : responseDto;
+    if(deleteHobbie){
+      responseDto.status = 200;
+      responseDto.data = await this.modelToDto(dataHobbie);
+      responseDto.message = "Delete Hobbie successfully";
+    }
     return responseDto;
   }
 
@@ -81,19 +95,24 @@ export class HobbieService extends BaseService<HobbieResponseDto, HobbieRequestD
     return responseDto;
   }
 
-  public async update(
-    id: string,
-    dto: HobbieRequestDto
-  ): Promise<ResponseBaseDto<HobbieResponseDto>> {
+  public async update(id: string, dto: HobbieRequestDto): Promise<ResponseBaseDto<HobbieResponseDto>> {
     
     let responseDto: ResponseBaseDto<HobbieResponseDto> = new ResponseBaseDto<HobbieResponseDto>();
+    if(this.repo.exists({_id:id})){
+      const modelDto = this.dtoToModel(dto);
+      modelDto.updateAt = new Date(Date.now());
+      const dataUpdate = await this.repo.update(id,modelDto);
+      responseDto.data = await this.modelToDto(dataUpdate);
+    }
 
     return responseDto;
   }
 
-  public async getByUserId(id: string): Promise<ResponseBaseDto<HobbieResponseDto>> {
-    let responseDto: ResponseBaseDto<HobbieResponseDto> = new ResponseBaseDto<HobbieResponseDto>();
-
+  public async getByUserId(id: string): Promise<ResponseBaseDto<HobbieResponseDto[]>> {
+    let responseDto: ResponseBaseDto<HobbieResponseDto[]> = new ResponseBaseDto<HobbieResponseDto[]>();
+    let dataHobbie = await this.repo.getAll({userId: id});
+    const userData = await Promise.all(dataHobbie.map( h => this.modelToDto(h)));
+    responseDto.data = userData;
     return responseDto;
   }
 
@@ -102,13 +121,15 @@ export class HobbieService extends BaseService<HobbieResponseDto, HobbieRequestD
       id: model._id,
       nameHobbie: model.nameHobbie,
       userId: model.userId,
+      create_at: model.createAt,
+      update_at: model.updateAt
     });
     return dto;
   }
 
   protected dtoToModel(dto: HobbieRequestDto): Hobbie {
     return new Hobbie({
-      userId: dto.userId,
+      userId: dto.user_id,
       nameHobbie: dto.nameHobbie,
     });
   }

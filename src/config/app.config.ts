@@ -7,7 +7,7 @@ import { APPLICATION_PORT, MONGO_HOST, MONGO_USER, MONGO_PASSWORD, MONGO_DATABAS
 @injectable()
 export class AppConfig {
     public readonly sourcePath: string = './src';
-    public readonly sourcePathProfile: string = './src/app/public/images';
+    public readonly sourcePathProfile: string = './src/public/images';
     public readonly sourcePathPublic: string = "../public/images";
     public readonly apiPath: string = '/api';
     public _urlClient: string = '';

@@ -1,3 +1,8 @@
+import { ImageController } from './../Applications/controllers/user/filePath.controller';
+import { FileModel } from './../Domain/models/filePath.model';
+import { FilePath } from 'Domain/models/filePath.model';
+import { FileRepository } from './../Domain/repositories/filePath.repository';
+import { FilesService } from './../Infrastructure/services/user/filePath.service';
 import { JwtWrapper, BcryptWrapper } from "../Infrastructure/wrappers/index.wrapper";
 
 import { ErrorExtractor } from "../Helpers/error-extractor.helper";
@@ -90,6 +95,7 @@ export class Container {
       bind<BaseController>(BaseController).to(UserController);
       bind<BaseController>(BaseController).to(AuthController);
       bind<BaseController>(BaseController).to(HobbieController);
+      bind<BaseController>(BaseController).to(ImageController);
     });
   }
 
@@ -107,6 +113,8 @@ export class Container {
       bind<UsersRepository>(UsersRepository).toConstantValue(new UsersRepository(UserModel));
       bind<ResetPasswordRepository>(ResetPasswordRepository).toConstantValue(new ResetPasswordRepository(ResetPasswordModel));
       bind<HobbieRepository>(HobbieRepository).toConstantValue(new HobbieRepository(HobbieModel));
+      bind<FileRepository>(FileRepository).toConstantValue(new FileRepository(FileModel));
+    
     });
   }
 
@@ -140,6 +148,7 @@ export class Container {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<ErrorExtractor>(ErrorExtractor).toSelf();
       bind<SecretsProvider>(SecretsProvider).toSelf().inSingletonScope();
+      bind<FilesService>(FilesService).toSelf();
     });
   }
 

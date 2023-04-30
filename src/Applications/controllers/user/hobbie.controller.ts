@@ -22,6 +22,7 @@ export class HobbieController extends BaseController {
       .post(`${this.path}`, this.create.bind(this))
       .get(`${this.path}/:userId`, this.getHobbieByUser.bind(this))
       .delete(`${this.path}/:id`, this.delete.bind(this))
+      .put(`${this.path}/:id`, this.update.bind(this))
   }
 
   private async index(request: IAuthRequest, response: Response) {
@@ -56,10 +57,15 @@ export class HobbieController extends BaseController {
     }
   }
 
-  @IdValidator()
   private async getHobbieByUser(request: IAuthRequest, response: Response) {
-    const id = request.params.id;
     const hobbieByUser = await this.hobbieService.getByUserId(request.params.userId);
     response.send(hobbieByUser);
+  }
+
+  @IdValidator()
+  private async update(request: IBodyRequest<HobbieRequestDto>, response: Response) {
+    const userUpdate = await this.hobbieService.update(request.params.id, request.body);
+    response.send(userUpdate);
+    return;
   }
 }

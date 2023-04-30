@@ -14,5 +14,5 @@ export default interface IHobbieServiceImplInterface {
 
   findById(id: string): Promise<ResponseBaseDto<HobbieResponseDto>>;
 
-  getByUserId(id: string): Promise<ResponseBaseDto<HobbieResponseDto>>;
+  getByUserId(id: string): Promise<ResponseBaseDto<HobbieResponseDto[]>>;
 }

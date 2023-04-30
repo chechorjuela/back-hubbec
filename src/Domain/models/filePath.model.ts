@@ -12,7 +12,6 @@ export const filePathSchema = new Schema({
   delete: {type: Schema.Types.Boolean, default: false}
 });
 
-
 export class FilePath extends BaseModel {
   id: string;
   name: string;
@@ -28,4 +27,4 @@ export class FilePath extends BaseModel {
   }
 }
 
-export const FilePathModel = model<FilePath & Document>('FilePath', filePathSchema);
+export const FileModel = model<FilePath & Document>('FilePath', filePathSchema);
