@@ -13,8 +13,8 @@ const userSchema = new Schema({
   password: {type: Schema.Types.String, required: true},
   typeId: { type: Schema.Types.String, required: true},
   numberId: {type: Schema.Types.String, required: true},
-  photoProfile: {ref: 'FilePath', type: Schema.Types.ObjectId},
-  birthdate: {type: Schema.Types.Date},
+  photoProfile: {type: Schema.Types.String},
+  birthDate: {type: Schema.Types.Date},
   expeditionDate: {type: Schema.Types.Date},
   createAt: {type: Schema.Types.Date, default: new Date(Date.now())},
   updateAt: {type: Schema.Types.Date},
@@ -32,8 +32,8 @@ export class User extends BaseModel {
   password: string;
   typeId: string;
   numberId: string;
-  photoProfile?: FilePath | null;
-  birthdate: Date;
+  photoProfile?: string | null;
+  birthDate: Date;
   expeditionDate: Date;
   createAt: Date;
   updateAt?: Date;

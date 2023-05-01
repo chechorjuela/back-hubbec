@@ -7,10 +7,12 @@ import { HobbieRequestDto } from '../../../Domain/dtos/user/hobbie.request.dto';
 import {Response} from "express";
 import { IdValidator } from '../../../Helpers/decorators/id-validator.decorator';
 import { StatusHelper } from '../../../Helpers/utils/status.helper';
+import {SocketService} from "../../../Infrastructure/services/socket.service";
 
 @injectable()
 export class HobbieController extends BaseController {
   @inject(HobbieService) private readonly hobbieService: HobbieService;
+  @inject(SocketService) private readonly socketService: SocketService;
 
   constructor() {
     super('/hobbie');
@@ -39,9 +41,10 @@ export class HobbieController extends BaseController {
 
   private async create(request: IBodyRequest<HobbieRequestDto>, response: Response) {
     const dto = request.body;
-    const hoobbie = await this.hobbieService.create(dto);
-    if (hoobbie) {
-      response.send(hoobbie);
+    const hobbie = await this.hobbieService.create(dto);
+    if (hobbie) {
+      this.socketService.emit('listHobbie',hobbie);
+      response.send(hobbie);
     }
     return;
   }

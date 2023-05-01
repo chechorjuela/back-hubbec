@@ -119,8 +119,9 @@ export class UserService extends BaseService<UserResponseDto, UserRequestDto, Us
       delete model.password;
       model.updateAt = new Date(Date.now());
       model = await this.repo.update(id, model);
+      console.info(model,'/***********************************************/')
       if (model) {
-        [responseDto.data] = await Promise.all([this.modelToDto(model)]);
+        responseDto.data= await this.modelToDto(model);
         responseDto.status = 200;
       }
     }
@@ -151,13 +152,16 @@ export class UserService extends BaseService<UserResponseDto, UserRequestDto, Us
   public async uploadImage(fileImage: UploadImageRequestDto): Promise<ResponseBaseDto<FilePathResponseDto[]>> {
     let responseDto: ResponseBaseDto<FilePathResponseDto[]> = new ResponseBaseDto<FilePathResponseDto[]>();
     responseDto.data = await this.filesService.createFile(fileImage.picture, 'user', fileImage.user_id, 'images');
-
+    let userModel = await this.repo.findById(fileImage.user_id);
+    userModel.photoProfile = responseDto.data[0].name;
+    const updateuser = await this.repo.update(fileImage.user_id, userModel);
     return responseDto;
 
   }
 
   protected modelToDto(model: User): UserResponseDto {
     return new UserResponseDto({
+      id: model._id,
       address: model.address,
       country: model.country,
       city: model.city,
@@ -165,10 +169,11 @@ export class UserService extends BaseService<UserResponseDto, UserRequestDto, Us
       email: model.email,
       lastname: model.lastname,
       phonenumber: model.phoneNumber,
-      profile_image: model.photoProfile.dir_path,
+      profile_image: model.photoProfile,
       typeId: model.typeId,
       numberId: model.numberId,
-      birthdate: model.birthdate,
+      expeditionDate: model.expeditionDate,
+      birthDate: model.birthDate,
       create_at: model.createAt,
       update_at: model.updateAt,
     });
@@ -178,10 +183,11 @@ export class UserService extends BaseService<UserResponseDto, UserRequestDto, Us
   protected dtoToModel(dto: UserRequestDto, passwordToken?: string): User {
 
     return new User({
+      address: dto.address,
       firstname: dto.firstname,
       lastname: dto.lastname,
       email: dto.email,
-      birthdate: dto.birthdate,
+      birthDate: dto.birthDate,
       password: passwordToken,
       expeditionDate: dto.expeditionDate,
       numberId: dto.numberId,

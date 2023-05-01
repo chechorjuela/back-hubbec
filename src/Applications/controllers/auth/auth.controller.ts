@@ -23,6 +23,7 @@ export class AuthController extends BaseController {
     this.router
       .post(`${this.path}/signup`, this.register.bind(this))
       .post(`${this.path}/signin`, this.login.bind(this))
+      .post(`${this.path}/refresh`, this.refresh.bind(this))
       .post(`${this.path}/logout`, this.logout.bind(this));
   }
 
@@ -83,7 +84,14 @@ export class AuthController extends BaseController {
    *          description: Successfully logged out
    */
   private async logout(request: Request, response: Response) {
+
     response.setHeader('Set-Cookie', 'Authorization=; Max-Age=0');
     response.sendStatus(StatusHelper.status204NoContent);
+  }
+
+  private async refresh(request: Request, response: Response) {
+    const result = await this.auth.refresh(request);
+    response.send(result);
+    return;
   }
 }

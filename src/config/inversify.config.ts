@@ -54,6 +54,7 @@ import {
   ResetPasswordRepository,
   UsersRepository,
 } from "../Domain/repositories/index.repositories";
+import {SocketService} from "../Infrastructure/services/socket.service";
 
 export class Container {
   private _container: InversifyContainer = new InversifyContainer();
@@ -103,6 +104,7 @@ export class Container {
     return new ContainerModule((bind: interfaces.Bind) => {
       bind<AuthService>(AuthService).toSelf();
       bind<TokenService>(TokenService).toSelf();
+      bind<SocketService>(SocketService).toSelf();
       bind<UserService>(UserService).toSelf();
       bind<HobbieService>(HobbieService).toSelf();
     });

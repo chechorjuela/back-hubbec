@@ -16,6 +16,7 @@ import { injectable, inject, multiInject } from 'inversify';
 import { AddressInfo } from 'net';
 import * as path from 'path';
 import * as bodyParser from "body-parser";
+import {SocketService} from "../Infrastructure/services/socket.service";
 
 @injectable()
 export class App {
@@ -30,12 +31,12 @@ export class App {
   @inject(ErrorMiddleware) private readonly errorMiddleware: ErrorMiddleware;
   @inject(RequestLoggerMiddleware) private readonly requestLoggerMiddleware: RequestLoggerMiddleware;
   @inject(ResponseLoggerMiddleware) private readonly responseLoggerMiddleware: ResponseLoggerMiddleware;
-
+  @inject(SocketService) private readonly socketService: SocketService;
   public initialize(process: NodeJS.Process): void {
     this.appConfig.initialize(process.env);
 
     this.dbConnector.connect();
-
+    this.socketService.initialize()
     this.setExpressSettings();
     this.initializePreMiddlewares();
     this.initializeControllers();
@@ -64,6 +65,7 @@ export class App {
   }
 
   private initializePreMiddlewares(): void {
+    this.app.use(this.socketService.initializeMiddleware());
     this.app.use(helmet());
     this.app.use(cors());
     this.app.use(cookieParser());

@@ -22,7 +22,7 @@ export class TokenService {
 
     const options = {
       algorithm: 'RS256',
-      expiresIn: this.appConfig.tokenExpirationInMin * 60,
+      expiresIn: this.appConfig.tokenExpirationInMin * 60, //*60
     };
     const token = this.jwt.sign(tokenData, this.secretsProvider.privateKey, options);
     return {
@@ -32,17 +32,12 @@ export class TokenService {
   }
 
   public verify(token: string): TokenData {
-    try {
+
       const options = {
         algorithms: ['RS256'],
       };
       const tokenData = this.jwt.verify(token, this.secretsProvider.publicKey, options) as TokenData;
       return tokenData;
-    } catch (err) {
-      if (err.name !== 'TokenExpiredError') {
-        this.authLogger.warn(err.message);
-      }
-      return null;
-    }
+
   }
 }

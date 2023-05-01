@@ -102,7 +102,7 @@ export class AppConfig {
         this._mongoDatabase = MONGO_DATABASE;
         this._applicationPort = 5050;
         this._debug = true;
-        this._tokenExpirationInMin = 540;
+        this._tokenExpirationInMin = 10;
         this._urlClient = URL_CLIENT;
     }
 }

@@ -9,7 +9,8 @@ export class UserResponseDto {
   public numberId: string;
   public email: string;
 
-  public birthdate: Date;
+  public birthDate: Date;
+  public expeditionDate?: Date;
   public phonenumber?: string;
   public typeId?: string;
   public create_at: Date;

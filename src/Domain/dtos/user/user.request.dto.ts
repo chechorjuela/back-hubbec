@@ -18,7 +18,7 @@ export class UserRequestDto{
   public type_user: number;
 
   @IsDateString()
-  public birthdate: Date;
+  public birthDate: Date;
 
   public phoneNumber?: string;
 
@@ -35,5 +35,7 @@ export class UserRequestDto{
   @IsString()
   @MinLength(3)
   public city?: string;
+
+  public address?: string;
 
 }

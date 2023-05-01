@@ -12,6 +12,7 @@ import {ResetpasswordRequestDto} from "../../../Domain/dtos/auth/resetPassword.r
 import {ForgotPasswordRequestDto} from "../../../Domain/dtos/auth/forgotPassword.request.dto";
 import * as crypto from "crypto";
 import * as moment from 'moment';
+import {Request, Response} from "express";
 import {ResetPassword} from "../../../Domain/models/resetPassword.model";
 import {ResetPasswordRepository} from "../../../Domain/repositories/resetPassword.repository";
 import {AppConfig} from "../../../config/app.config";
@@ -74,6 +75,17 @@ export class AuthService implements IAuthServiceInterface {
     return responseDto;
   }
 
+  public async refresh(request: Request): Promise<ResponseBaseDto<UserResponseDto>> {
+    //return this.tokenService.create()
+    let responseDto: ResponseBaseDto<UserResponseDto> = new ResponseBaseDto<UserResponseDto>();
+    const originalToken = request.headers.authorization?.split(' ')[1];
+    const decodedToken = await this.tokenService.verify(originalToken);
+    const user = await this.repoUser.findOne({_id: decodedToken.userId});
+    const token = this.tokenService.create(user);
+    const userDto = this.modelToDto(user, token);
+    responseDto.data = userDto;
+    return responseDto;
+  }
   public async forgotPassword(forgot: ForgotPasswordRequestDto): Promise<ResponseBaseDto<boolean>> {
     let responseDto: ResponseBaseDto<boolean> = new ResponseBaseDto<boolean>();
     responseDto.data = false;
@@ -114,17 +126,7 @@ export class AuthService implements IAuthServiceInterface {
         if (resetPassword.password === resetPassword.rptpassword) {
           user.password = await this.bcrypt.hash(resetPassword.password, this.salt);
           let model = await this.repoUser.update(resetPassword.userId, user);
-       /*   if (model != null) {
-            const html = '<h4><b>Reset Password Success</b></h4>' +
-              '<p>Your password is update:</p>' +
-              '<br><br>' +
-              '<p>--Team</p>'
-            this.sendEmailService.sendMail(user.email, "Update Password", html);
-            const dl = await this.repoResetPassword.delete(rsPassword._id)
-            responseDto.data = true;
-            responseDto.status = 200;
-            responseDto.message = "Send email for recuve the password"
-          }*/
+
         } else {
           responseDto.status = 402;
         }
@@ -144,6 +146,12 @@ export class AuthService implements IAuthServiceInterface {
       firstname: model.firstname,
       email: model.email,
       lastname: model.lastname,
+      expeditionDate: model.expeditionDate,
+      birthDate: model.birthDate,
+      profile_image: model.photoProfile,
+      phonenumber: model.photoProfile,
+      city: model.city,
+      country: model.country,
       token: token
     });
   }
@@ -159,4 +167,5 @@ export class AuthService implements IAuthServiceInterface {
       phoneNumber: dto.phoneNumber,
     });
   };
+
 }
